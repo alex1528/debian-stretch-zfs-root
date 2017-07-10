@@ -26,7 +26,7 @@
 
 ### Static settings
 
-ZPOOL=tank
+ZPOOL=rpool
 TARGETDIST=stretch
 
 PARTBIOS=1
@@ -130,13 +130,13 @@ fi
 DEBRELEASE=$(head -n1 /etc/debian_version)
 case $DEBRELEASE in
 	8*)
-		echo "deb http://http.debian.net/debian/ jessie-backports main contrib non-free" >/etc/apt/sources.list.d/jessie-backports.list
+		echo "deb http://ftp.cn.debian.org/debian/ jessie-backports main contrib non-free" >/etc/apt/sources.list.d/jessie-backports.list
 		test -f /var/lib/apt/lists/http.debian.net_debian_dists_jessie-backports_InRelease || apt-get update
 		test -d /usr/share/doc/zfs-dkms || DEBIAN_FRONTEND=noninteractive apt-get install --yes gdisk debootstrap dosfstools zfs-dkms/jessie-backports
 		;;
 
 	9*)
-		echo "deb http://deb.debian.org/debian/ stretch contrib non-free" >/etc/apt/sources.list.d/contrib-non-free.list
+		echo "deb http://ftp.cn.debian.org/debian/ stretch contrib non-free" >/etc/apt/sources.list.d/contrib-non-free.list
 		test -f /var/lib/apt/lists/deb.debian.org_debian_dists_stretch_non-free_binary-amd64_Packages || apt-get update
 		test -d /usr/share/doc/zfs-dkms || DEBIAN_FRONTEND=noninteractive apt-get install --yes gdisk debootstrap dosfstools zfs-dkms
 		;;
@@ -217,7 +217,7 @@ for EFIPARTITION in "${EFIPARTITIONS[@]}"; do
 	((I++))
 done
 
-debootstrap --include=openssh-server,locales,joe,rsync,sharutils,psmisc,htop,patch,less $TARGETDIST /target http://http.debian.net/debian/
+debootstrap --include=openssh-server,locales,joe,rsync,sharutils,psmisc,htop,patch,less $TARGETDIST /target http://ftp.cn.debian.org/debian/
 
 NEWHOST=debian-$(hostid)
 echo $NEWHOST >/target/etc/hostname
@@ -284,7 +284,7 @@ fi
 ETHDEV=$(udevadm info -e | grep "ID_NET_NAME_PATH=" | head -n1 | cut -d= -f2)
 test -n "$ETHDEV" || ETHDEV=enp0s1
 echo -e "\nauto $ETHDEV\niface $ETHDEV inet dhcp\n" >>/target/etc/network/interfaces
-echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" >> /target/etc/resolv.conf
+echo -e "nameserver 114.114.114.114\nnameserver 114.114.115.115" >> /target/etc/resolv.conf
 
 chroot /target /usr/bin/passwd
 chroot /target /usr/sbin/dpkg-reconfigure tzdata
